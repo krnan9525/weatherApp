@@ -9,6 +9,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -40,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int REFRESH_LOCATION_TIMEOUT = 1800;
     private static final int CURRENT_WEATHER_REFRESH_DELAY = 1000; //1 second
     private static final int CURRENT_WEATHER_REFRESH_INTERVAL = 15000; //15 second
+    private static final int LOCATION_PERMISSION_CODE = 1; //15 second
 
     private SharedPreferences preferences;
     private double userLatitude = 0.0f;
@@ -119,14 +121,19 @@ public class MainActivity extends AppCompatActivity {
         if (shouldLocationBeRefreshed()) {
             /* Request for location permission if is not granted */
             requestLocationPermission();
-            locc = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            LocationListener locationListener = new MyLocationListener();
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                return;
-            }
-            locc.requestLocationUpdates(
-                    LocationManager.NETWORK_PROVIDER, 5000, 10, locationListener);
+            setupLocationListener();
         }
+    }
+
+    private void setupLocationListener() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        locc = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        LocationListener locationListener = new MyLocationListener();
+        locc.requestLocationUpdates(
+                LocationManager.NETWORK_PROVIDER, 5000, 10, locationListener
+        );
     }
 
     private void setPreferences() {
@@ -151,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
     private void requestLocationPermission() {
         if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_PERMISSION_CODE);
                 if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
                     Toast.makeText(getApplicationContext(), "This app wishes to use your location to provide personalized information for you.", Toast.LENGTH_LONG).show();
                 }
@@ -169,6 +176,14 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if(requestCode == LOCATION_PERMISSION_CODE){
+            setupLocationListener();
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
     private class MyLocationListener implements LocationListener {
 
         @Override
@@ -181,6 +196,7 @@ public class MainActivity extends AppCompatActivity {
             prefEditor.putLong("lastRefreshLocationTimeStamp", System.currentTimeMillis() / 1000L);
             prefEditor.apply();
             locc.removeUpdates(this);
+            refreshCurrentWeather();
         }
 
         @Override
