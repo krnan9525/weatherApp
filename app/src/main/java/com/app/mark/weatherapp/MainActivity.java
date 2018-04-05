@@ -21,6 +21,9 @@ import com.app.mark.weatherapp.model.CurrentWeatherModel;
 import com.app.mark.weatherapp.services.OpenWeatherService;
 import com.squareup.picasso.Picasso;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import static java.lang.Math.abs;
 import static java.lang.Math.min;
 
@@ -35,15 +38,16 @@ public class MainActivity extends AppCompatActivity {
      * 1800s => 0.5 hour
      */
     private static final int REFRESH_LOCATION_TIMEOUT = 1800;
-    private SharedPreferences preferences;
+    private static final int CURRENT_WEATHER_REFRESH_DELAY = 1000; //1 second
+    private static final int CURRENT_WEATHER_REFRESH_INTERVAL = 15000; //15 second
 
+    private SharedPreferences preferences;
     private double userLatitude = 0.0f;
     private double userLongitude = 0.0f;
     private long lastRefreshLocationTimeStamp = 0;
     private LocationManager locc;
     private CurrentWeatherModel currentWeatherModel;
-    private TextView cityName, currentTemp, minTemp, maxTemp, humidity, windSpeed, windDirection
-            , weatherText, sunRiseTime, sunSetTime;
+    private TextView cityName, currentTemp, minTemp, maxTemp, humidity, windSpeed, windDirection, weatherText, sunRiseTime, sunSetTime;
     private ImageView weatherImage;
 
     @Override
@@ -54,10 +58,29 @@ public class MainActivity extends AppCompatActivity {
         setPreferences();
         getStoredGeoLocation();
         refreshGeoCoordinates();
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        refreshCurrentWeather();
+                    }
+                });
+            }
+        }, CURRENT_WEATHER_REFRESH_DELAY, CURRENT_WEATHER_REFRESH_INTERVAL);
+    }
+
+    private void refreshCurrentWeather() {
         OpenWeatherService openWeatherService = new OpenWeatherService(this);
         currentWeatherModel = openWeatherService.getCurrentWeatherByLocation(userLatitude, userLongitude, new OnRemoteCallFinishListener() {
             @Override
             public void success() {
+                String countryCode = currentWeatherModel.getSunRise().getCountryCode();
+                SharedPreferences.Editor prefEditor = preferences.edit();
+                prefEditor.putString("countryCode", countryCode);
+                prefEditor.putBoolean("isImperialUnitCountry", isImperialUnitCountry(countryCode));
+                prefEditor.apply();
                 setUI();
             }
         });
@@ -134,6 +157,16 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    private boolean isImperialUnitCountry(String countryCode) {
+        String[] imperialCountries = getResources().getStringArray(R.array.country_with_imperial);
+        for (String imperialCountry : imperialCountries) {
+            if (countryCode.equalsIgnoreCase(imperialCountry)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private class MyLocationListener implements LocationListener {

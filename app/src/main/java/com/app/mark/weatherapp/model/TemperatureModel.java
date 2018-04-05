@@ -16,6 +16,14 @@ public class TemperatureModel implements JSONSerializationInterface {
     private double avgTemp = 0.0f;
     private Units unit = Units.METRIC;
 
+    public TemperatureModel(Boolean isUsingImperialUnit) {
+        if (isUsingImperialUnit) {
+            unit = Units.IMPERIAL;
+        } else {
+            unit = Units.METRIC;
+        }
+    }
+
     @Override
     public void constructClassFromJson(JSONObject jsonObject) {
         try {
@@ -64,24 +72,20 @@ public class TemperatureModel implements JSONSerializationInterface {
         this.avgTemp = avgTemp;
     }
 
-    public String getMinTempWithUnit()
-    {
+    public String getMinTempWithUnit() {
         return getMinTemp() + " " + getTempUnitReadable();
     }
 
-    public String getAvgTempWithUnit()
-    {
+    public String getAvgTempWithUnit() {
         return getAvgTemp() + " " + getTempUnitReadable();
     }
 
-    public String getMaxTempWithUnit()
-    {
+    public String getMaxTempWithUnit() {
         return getMaxTemp() + " " + getTempUnitReadable();
     }
 
-    private String getTempUnitReadable()
-    {
-        switch (unit){
+    private String getTempUnitReadable() {
+        switch (unit) {
             case METRIC:
                 return "°C";
             case IMPERIAL:

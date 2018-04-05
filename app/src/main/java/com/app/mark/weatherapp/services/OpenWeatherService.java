@@ -1,6 +1,8 @@
 package com.app.mark.weatherapp.services;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.app.mark.weatherapp.Constants;
@@ -27,12 +29,12 @@ public class OpenWeatherService implements WeatherInterface {
 
     public OpenWeatherService(Activity activity) {
         context = activity;
-        currentWeather = new CurrentWeatherModel();
+        currentWeather = new CurrentWeatherModel(this.isUsingImperialUnit());
     }
 
     @Override
     public CurrentWeatherModel getCurrentWeatherByLocation(double latitude, double longitude, final OnRemoteCallFinishListener onRemoteCallFinishListener) {
-        String weatherUrl = composeCurrentWeatherUrl(String.format ("%.3f", latitude), String.format ("%.3f", longitude));
+        String weatherUrl = composeCurrentWeatherUrl(String.format("%.3f", latitude), String.format("%.3f", longitude));
         final AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
         client.post(weatherUrl, params, new AsyncHttpResponseHandler() {
@@ -56,9 +58,25 @@ public class OpenWeatherService implements WeatherInterface {
         return currentWeather;
     }
 
-    private static String composeCurrentWeatherUrl(String lat, String lon)
-    {
-        return Constants.OPEN_WEATHER_BASE_URL + Constants.WEATHER_ENDPOINT + "?APPID=" + Constants.OPEN_WEATHER_API_KEY + "&lat=" + lat + "&lon=" + lon + "&units=metric";
+    private String composeCurrentWeatherUrl(String lat, String lon) {
+        String unitName = getUnitNameByPreference();
+        return Constants.OPEN_WEATHER_BASE_URL + Constants.WEATHER_ENDPOINT + "?APPID=" + Constants.OPEN_WEATHER_API_KEY + "&lat=" + lat + "&lon=" + lon + unitName;
+    }
+
+    private String getUnitNameByPreference() {
+        Boolean isImperialCounty = isUsingImperialUnit();
+        if (isImperialCounty) {
+            return "&units=imperial";
+        } else {
+            return "&units=metric";
+        }
+    }
+
+    @NonNull
+    private Boolean isUsingImperialUnit() {
+        SharedPreferences preferences;
+        preferences = context.getSharedPreferences("weatherApp", Activity.MODE_PRIVATE);
+        return preferences.getBoolean("isImperialUnitCountry", false);
     }
 
     public CurrentWeatherModel getCurrentWeather() {

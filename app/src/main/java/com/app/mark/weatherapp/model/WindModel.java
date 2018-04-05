@@ -13,10 +13,18 @@ import java.text.NumberFormat;
  * Created by Mark on 05/04/2018.
  */
 
-public class WindModel implements JSONSerializationInterface{
+public class WindModel implements JSONSerializationInterface {
     private double speed = 0.0f;
     private int degree = 0;
     private Units unit = Units.METRIC;
+
+    public WindModel(Boolean isUsingImperialUnit) {
+        if (isUsingImperialUnit) {
+            unit = Units.IMPERIAL;
+        } else {
+            unit = Units.METRIC;
+        }
+    }
 
     @Override
     public void constructClassFromJson(JSONObject jsonObject) {
@@ -57,15 +65,13 @@ public class WindModel implements JSONSerializationInterface{
         this.unit = unit;
     }
 
-    public String getWindSpeedWithUnit()
-    {
+    public String getWindSpeedWithUnit() {
         NumberFormat formatter = new DecimalFormat("#0.0");
         return formatter.format(getSpeed()) + getSpeedUnitReadable();
     }
 
-    private String getSpeedUnitReadable()
-    {
-        switch (unit){
+    private String getSpeedUnitReadable() {
+        switch (unit) {
             case METRIC:
                 return "m/s";
             case IMPERIAL:

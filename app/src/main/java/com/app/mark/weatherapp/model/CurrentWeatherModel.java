@@ -16,17 +16,22 @@ public class CurrentWeatherModel implements JSONSerializationInterface {
     private WindModel wind;
     private WeatherModel weather;
     private SunRiseModel sunRise;
+    private Boolean isUsingImperialUnit = false;
+
+    public CurrentWeatherModel(Boolean isUsingImperialUnit) {
+        this.isUsingImperialUnit = isUsingImperialUnit;
+    }
 
     @Override
     public void constructClassFromJson(JSONObject jsonObject) {
         try {
             cityName = jsonObject.getString("name");
-            temperature = new TemperatureModel();
+            temperature = new TemperatureModel(isUsingImperialUnit);
             temperature.constructClassFromJson(jsonObject.getJSONObject("main"));
             humidity = jsonObject.getJSONObject("main").getInt("humidity");
-            wind = new WindModel();
+            wind = new WindModel(isUsingImperialUnit);
             wind.constructClassFromJson(jsonObject.getJSONObject("wind"));
-            weather= new WeatherModel();
+            weather = new WeatherModel();
             weather.constructClassFromJson(jsonObject.getJSONArray("weather").getJSONObject(0));
             sunRise = new SunRiseModel();
             sunRise.constructClassFromJson(jsonObject.getJSONObject("sys"));
@@ -86,5 +91,13 @@ public class CurrentWeatherModel implements JSONSerializationInterface {
 
     public void setSunRise(SunRiseModel sunRise) {
         this.sunRise = sunRise;
+    }
+
+    public Boolean getUsingImperialUnit() {
+        return isUsingImperialUnit;
+    }
+
+    public void setUsingImperialUnit(Boolean usingImperialUnit) {
+        isUsingImperialUnit = usingImperialUnit;
     }
 }

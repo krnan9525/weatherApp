@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">WeatherApp</string>
+    <string-array name="country_with_imperial">
+        <item>LR</item>
+        <item>US</item>
+        <item>MM</item>
+    </string-array>
 </resources>
