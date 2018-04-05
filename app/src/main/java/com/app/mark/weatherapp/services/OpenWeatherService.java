@@ -89,7 +89,7 @@ public class OpenWeatherService implements WeatherInterface {
         this.currentWeather = currentWeather;
     }
 
-    public String getApiKey()
+    private String getApiKey()
     {
         Qlassified.Service.start(context);
         Qlassified.Service.setStorageService(new QlassifiedSharedPreferencesService(context, "api_key_storage"));
