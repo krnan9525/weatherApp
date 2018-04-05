@@ -12,12 +12,14 @@ import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.mark.weatherapp.interfaces.OnRemoteCallFinishListener;
 import com.app.mark.weatherapp.model.CurrentWeatherModel;
 import com.app.mark.weatherapp.services.OpenWeatherService;
+import com.squareup.picasso.Picasso;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.min;
@@ -40,7 +42,8 @@ public class MainActivity extends AppCompatActivity {
     private long lastRefreshLocationTimeStamp = 0;
     private LocationManager locc;
     private CurrentWeatherModel currentWeatherModel;
-    TextView cityName, currentTemp, minTemp, maxTemp, humidity, windSpeed, windDirection;
+    private TextView cityName, currentTemp, minTemp, maxTemp, humidity, windSpeed, windDirection, weatherText;
+    private ImageView weatherImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +70,8 @@ public class MainActivity extends AppCompatActivity {
         humidity = findViewById(R.id.humidity);
         windSpeed = findViewById(R.id.wind_speed);
         windDirection = findViewById(R.id.wind_direction);
+        weatherText = findViewById(R.id.weather_text);
+        weatherImage = findViewById(R.id.weather_icon);
     }
 
     private void setUI() {
@@ -77,6 +82,8 @@ public class MainActivity extends AppCompatActivity {
         humidity.setText(currentWeatherModel.getHumidity() + "%");
         windSpeed.setText(currentWeatherModel.getWind().getWindSpeedWithUnit());
         windDirection.setText(currentWeatherModel.getWind().getDegree() + " Degree");
+        weatherText.setText(currentWeatherModel.getWeather().getMainDescription());
+        Picasso.with(this).load(currentWeatherModel.getWeather().getIconWebPath()).into(weatherImage);
     }
 
     private void refreshGeoCoordinates() {

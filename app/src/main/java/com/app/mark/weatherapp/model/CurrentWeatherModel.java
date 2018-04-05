@@ -14,6 +14,7 @@ public class CurrentWeatherModel implements JSONSerializationInterface {
     private TemperatureModel temperature;
     private int humidity = 0;
     private WindModel wind;
+    private WeatherModel weather;
 
     @Override
     public void constructClassFromJson(JSONObject jsonObject) {
@@ -24,6 +25,8 @@ public class CurrentWeatherModel implements JSONSerializationInterface {
             humidity = jsonObject.getJSONObject("main").getInt("humidity");
             wind = new WindModel();
             wind.constructClassFromJson(jsonObject.getJSONObject("wind"));
+            weather= new WeatherModel();
+            weather.constructClassFromJson(jsonObject.getJSONArray("weather").getJSONObject(0));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -64,5 +67,13 @@ public class CurrentWeatherModel implements JSONSerializationInterface {
 
     public void setTemperature(TemperatureModel temperature) {
         this.temperature = temperature;
+    }
+
+    public WeatherModel getWeather() {
+        return weather;
+    }
+
+    public void setWeather(WeatherModel weather) {
+        this.weather = weather;
     }
 }
