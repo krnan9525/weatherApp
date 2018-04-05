@@ -81,6 +81,9 @@ public class MainActivity extends AppCompatActivity {
         }, CURRENT_WEATHER_REFRESH_DELAY, CURRENT_WEATHER_REFRESH_INTERVAL);
     }
 
+    /**
+     * call remote server to refresh current weather data
+     */
     private void refreshCurrentWeather() {
         OpenWeatherService openWeatherService = new OpenWeatherService(this);
         currentWeatherModel = openWeatherService.getCurrentWeatherByLocation(userLatitude, userLongitude, new OnRemoteCallFinishListener() {

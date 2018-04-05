@@ -41,6 +41,23 @@ public class WindModel implements JSONSerializationInterface {
         return null;
     }
 
+    public String getWindSpeedWithUnit() {
+        NumberFormat formatter = new DecimalFormat("#0.0");
+        return formatter.format(getSpeed()) + getSpeedUnitReadable();
+    }
+
+    private String getSpeedUnitReadable() {
+        switch (unit) {
+            case METRIC:
+                return "m/s";
+            case IMPERIAL:
+                return "mile/hour";
+            case SCIENTIFIC:
+                return "m/s";
+        }
+        return null;
+    }
+
     public double getSpeed() {
         return speed;
     }
@@ -63,22 +80,5 @@ public class WindModel implements JSONSerializationInterface {
 
     public void setUnit(Units unit) {
         this.unit = unit;
-    }
-
-    public String getWindSpeedWithUnit() {
-        NumberFormat formatter = new DecimalFormat("#0.0");
-        return formatter.format(getSpeed()) + getSpeedUnitReadable();
-    }
-
-    private String getSpeedUnitReadable() {
-        switch (unit) {
-            case METRIC:
-                return "m/s";
-            case IMPERIAL:
-                return "mile/hour";
-            case SCIENTIFIC:
-                return "m/s";
-        }
-        return null;
     }
 }

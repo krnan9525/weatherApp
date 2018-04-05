@@ -33,6 +33,10 @@ public class WeatherModel implements JSONSerializationInterface {
         return null;
     }
 
+    public String getIconWebPath(){
+        return Constants.OPEN_WEATHER_ICON_BASE_PATH + iconId + ".png";
+    }
+
     public int getWeatherId() {
         return weatherId;
     }
@@ -63,9 +67,5 @@ public class WeatherModel implements JSONSerializationInterface {
 
     public void setIconId(String iconId) {
         this.iconId = iconId;
-    }
-
-    public String getIconWebPath(){
-        return Constants.OPEN_WEATHER_ICON_BASE_PATH + iconId + ".png";
     }
 }

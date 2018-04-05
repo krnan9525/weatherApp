@@ -34,6 +34,18 @@ public class SunRiseModel implements JSONSerializationInterface {
         return null;
     }
 
+    public String getSunRiseTimeReadable()
+    {
+        Date date = new Date(sunRiseTimeUnix * 1000);
+        return DateFormat.getTimeInstance(DateFormat.SHORT, Locale.getDefault()).format(date);
+    }
+
+    public String getSunSetTimeReadable()
+    {
+        Date date = new Date(sunSetTimeUnit * 1000);
+        return DateFormat.getTimeInstance(DateFormat.SHORT, Locale.getDefault()).format(date);
+    }
+
     public long getSunRiseTimeUnix() {
         return sunRiseTimeUnix;
     }
@@ -56,17 +68,5 @@ public class SunRiseModel implements JSONSerializationInterface {
 
     public void setCountryCode(String countryCode) {
         this.countryCode = countryCode;
-    }
-
-    public String getSunRiseTimeReadable()
-    {
-        Date date = new Date(sunRiseTimeUnix * 1000);
-        return DateFormat.getTimeInstance(DateFormat.SHORT, Locale.getDefault()).format(date);
-    }
-
-    public String getSunSetTimeReadable()
-    {
-        Date date = new Date(sunSetTimeUnit * 1000);
-        return DateFormat.getTimeInstance(DateFormat.SHORT, Locale.getDefault()).format(date);
     }
 }
