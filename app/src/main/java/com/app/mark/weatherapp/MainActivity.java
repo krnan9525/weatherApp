@@ -38,9 +38,13 @@ public class MainActivity extends AppCompatActivity {
      * within the given seconds.
      * Do this to avoid unnecessary power consumption
      * <p>
-     * 1800s => 0.5 hour
+     * 1800s => 15 minutes
      */
-    private static final int REFRESH_LOCATION_TIMEOUT = 1800;
+    private static final int REFRESH_LOCATION_TIMEOUT = 900;
+    /**
+     * CURRENT_WEATHER_REFRESH_DELAY and CURRENT_WEATHER_REFRESH_INTERVAL
+     * used to automatically refresh the weather if user stays on this activity
+     */
     private static final int CURRENT_WEATHER_REFRESH_DELAY = 1000; //1 second
     private static final int CURRENT_WEATHER_REFRESH_INTERVAL = 15000; //15 second
     private static final int LOCATION_PERMISSION_CODE = 1; //15 second
@@ -70,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         refreshCurrentWeather();
+                        Toast.makeText(MainActivity.this, "Weather has been updated", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
