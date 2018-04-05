@@ -42,7 +42,8 @@ public class MainActivity extends AppCompatActivity {
     private long lastRefreshLocationTimeStamp = 0;
     private LocationManager locc;
     private CurrentWeatherModel currentWeatherModel;
-    private TextView cityName, currentTemp, minTemp, maxTemp, humidity, windSpeed, windDirection, weatherText;
+    private TextView cityName, currentTemp, minTemp, maxTemp, humidity, windSpeed, windDirection
+            , weatherText, sunRiseTime, sunSetTime;
     private ImageView weatherImage;
 
     @Override
@@ -72,6 +73,8 @@ public class MainActivity extends AppCompatActivity {
         windDirection = findViewById(R.id.wind_direction);
         weatherText = findViewById(R.id.weather_text);
         weatherImage = findViewById(R.id.weather_icon);
+        sunRiseTime = findViewById(R.id.sun_rise_time);
+        sunSetTime = findViewById(R.id.sun_set_time);
     }
 
     private void setUI() {
@@ -84,6 +87,8 @@ public class MainActivity extends AppCompatActivity {
         windDirection.setText(currentWeatherModel.getWind().getDegree() + " Degree");
         weatherText.setText(currentWeatherModel.getWeather().getMainDescription());
         Picasso.with(this).load(currentWeatherModel.getWeather().getIconWebPath()).into(weatherImage);
+        sunRiseTime.setText(currentWeatherModel.getSunRise().getSunRiseTimeReadable());
+        sunSetTime.setText(currentWeatherModel.getSunRise().getSunSetTimeReadable());
     }
 
     private void refreshGeoCoordinates() {
