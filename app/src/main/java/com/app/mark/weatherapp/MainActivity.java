@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private static final int CURRENT_WEATHER_REFRESH_DELAY = 1000; //1 second
     private static final int CURRENT_WEATHER_REFRESH_INTERVAL = 15000; //15 second
-    private static final int LOCATION_PERMISSION_CODE = 1; //15 second
+    private static final int LOCATION_PERMISSION_CODE = 1;
 
     private SharedPreferences preferences;
     private double userLatitude = 0.0f;
