@@ -6,6 +6,9 @@ import com.app.mark.weatherapp.interfaces.JSONSerializationInterface;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+
 /**
  * Created by Mark on 05/04/2018.
  */
@@ -52,5 +55,24 @@ public class WindModel implements JSONSerializationInterface{
 
     public void setUnit(Units unit) {
         this.unit = unit;
+    }
+
+    public String getWindSpeedWithUnit()
+    {
+        NumberFormat formatter = new DecimalFormat("#0.0");
+        return formatter.format(getSpeed()) + getSpeedUnitReadable();
+    }
+
+    private String getSpeedUnitReadable()
+    {
+        switch (unit){
+            case METRIC:
+                return "m/s";
+            case IMPERIAL:
+                return "mile/hour";
+            case SCIENTIFIC:
+                return "m/s";
+        }
+        return null;
     }
 }

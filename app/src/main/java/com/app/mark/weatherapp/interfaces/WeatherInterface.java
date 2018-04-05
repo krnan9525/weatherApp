@@ -7,5 +7,5 @@ import com.app.mark.weatherapp.model.CurrentWeatherModel;
  */
 
 public interface WeatherInterface {
-    CurrentWeatherModel getCurrentWeatherByLocation(double latitude, double longitude);
+    CurrentWeatherModel getCurrentWeatherByLocation(double latitude, double longitude, OnRemoteCallFinishListener onRemoteCallFinishListener);
 }

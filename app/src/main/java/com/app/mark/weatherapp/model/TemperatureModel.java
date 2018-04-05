@@ -63,4 +63,32 @@ public class TemperatureModel implements JSONSerializationInterface {
     public void setAvgTemp(double avgTemp) {
         this.avgTemp = avgTemp;
     }
+
+    public String getMinTempWithUnit()
+    {
+        return getMinTemp() + " " + getTempUnitReadable();
+    }
+
+    public String getAvgTempWithUnit()
+    {
+        return getAvgTemp() + " " + getTempUnitReadable();
+    }
+
+    public String getMaxTempWithUnit()
+    {
+        return getMaxTemp() + " " + getTempUnitReadable();
+    }
+
+    private String getTempUnitReadable()
+    {
+        switch (unit){
+            case METRIC:
+                return "°C";
+            case IMPERIAL:
+                return "°F";
+            case SCIENTIFIC:
+                return "°K";
+        }
+        return null;
+    }
 }

@@ -12,20 +12,24 @@ import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.mark.weatherapp.interfaces.OnRemoteCallFinishListener;
+import com.app.mark.weatherapp.model.CurrentWeatherModel;
 import com.app.mark.weatherapp.services.OpenWeatherService;
 
 import static java.lang.Math.abs;
+import static java.lang.Math.min;
 
 public class MainActivity extends AppCompatActivity {
 
     /**
      * REFRESH_LOCATION_TIMEOUT:
      * refresh the current location and store in user preference if it hasn't been updated
-     *      within the given seconds.
+     * within the given seconds.
      * Do this to avoid unnecessary power consumption
-     *
+     * <p>
      * 1800s => 0.5 hour
      */
     private static final int REFRESH_LOCATION_TIMEOUT = 1800;
@@ -35,48 +39,45 @@ public class MainActivity extends AppCompatActivity {
     private double userLongitude = 0.0f;
     private long lastRefreshLocationTimeStamp = 0;
     private LocationManager locc;
+    private CurrentWeatherModel currentWeatherModel;
+    TextView cityName, currentTemp, minTemp, maxTemp, humidity, windSpeed, windDirection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        initUI();
         setPreferences();
         getStoredGeoLocation();
         refreshGeoCoordinates();
-        OpenWeatherService openWeatherService = new OpenWeatherService();
-        openWeatherService.getCurrentWeatherByLocation(userLatitude, userLongitude);
+        OpenWeatherService openWeatherService = new OpenWeatherService(this);
+        currentWeatherModel = openWeatherService.getCurrentWeatherByLocation(userLatitude, userLongitude, new OnRemoteCallFinishListener() {
+            @Override
+            public void success() {
+                setUI();
+            }
+        });
     }
 
-    /*private void loadKeyStore()
-    {
-        try {
-            KeyStore.getInstance("openWeatherKeys");
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-        }
+    private void initUI() {
+        cityName = findViewById(R.id.city_name);
+        currentTemp = findViewById(R.id.current_temp);
+        minTemp = findViewById(R.id.min_temp);
+        maxTemp = findViewById(R.id.max_temp);
+        humidity = findViewById(R.id.humidity);
+        windSpeed = findViewById(R.id.wind_speed);
+        windDirection = findViewById(R.id.wind_direction);
     }
 
-    private void generateNewKeyPair()
-    {
-        KeyPairGenerator kpg = null;
-        try {
-            kpg = KeyPairGenerator.getInstance(
-                    KeyProperties.KEY_ALGORITHM_EC, "AndroidKeyStore");
-            kpg.initialize(new KeyGenParameterSpec.Builder(
-                    alias,
-                    KeyProperties.PURPOSE_SIGN | KeyProperties.PURPOSE_VERIFY)
-                    .setDigests(KeyProperties.DIGEST_SHA256,
-                            KeyProperties.DIGEST_SHA512)
-                    .build());
-
-            KeyPair kp = kpg.generateKeyPair();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (NoSuchProviderException e) {
-            e.printStackTrace();
-        }
-
-    }*/
+    private void setUI() {
+        cityName.setText(currentWeatherModel.getCityName());
+        currentTemp.setText(currentWeatherModel.getTemperature().getAvgTempWithUnit());
+        minTemp.setText(currentWeatherModel.getTemperature().getMinTempWithUnit());
+        maxTemp.setText(currentWeatherModel.getTemperature().getMaxTempWithUnit());
+        humidity.setText(currentWeatherModel.getHumidity() + "%");
+        windSpeed.setText(currentWeatherModel.getWind().getWindSpeedWithUnit());
+        windDirection.setText(currentWeatherModel.getWind().getDegree() + " Degree");
+    }
 
     private void refreshGeoCoordinates() {
         /* Refresh location if is not set or is timeout*/
@@ -112,8 +113,7 @@ public class MainActivity extends AppCompatActivity {
                 || (System.currentTimeMillis() / 1000L > (lastRefreshLocationTimeStamp + REFRESH_LOCATION_TIMEOUT)); //timeout
     }
 
-    private void requestLocationPermission()
-    {
+    private void requestLocationPermission() {
         if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);

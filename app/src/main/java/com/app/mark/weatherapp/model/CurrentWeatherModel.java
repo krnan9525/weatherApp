@@ -12,7 +12,7 @@ import org.json.JSONObject;
 public class CurrentWeatherModel implements JSONSerializationInterface {
     private String cityName = "";
     private TemperatureModel temperature;
-    private double humidity = 0.0f;
+    private int humidity = 0;
     private WindModel wind;
 
     @Override
@@ -21,7 +21,7 @@ public class CurrentWeatherModel implements JSONSerializationInterface {
             cityName = jsonObject.getString("name");
             temperature = new TemperatureModel();
             temperature.constructClassFromJson(jsonObject.getJSONObject("main"));
-            humidity = jsonObject.getJSONObject("main").getDouble("humidity");
+            humidity = jsonObject.getJSONObject("main").getInt("humidity");
             wind = new WindModel();
             wind.constructClassFromJson(jsonObject.getJSONObject("wind"));
         } catch (JSONException e) {
@@ -42,11 +42,11 @@ public class CurrentWeatherModel implements JSONSerializationInterface {
         this.cityName = cityName;
     }
 
-    public double getHumidity() {
+    public int getHumidity() {
         return humidity;
     }
 
-    public void setHumidity(float humidity) {
+    public void setHumidity(int humidity) {
         this.humidity = humidity;
     }
 
