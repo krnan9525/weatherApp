@@ -12,6 +12,8 @@ import com.app.mark.weatherapp.model.CurrentWeatherModel;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.q42.qlassified.Qlassified;
+import com.q42.qlassified.Storage.QlassifiedSharedPreferencesService;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -60,7 +62,7 @@ public class OpenWeatherService implements WeatherInterface {
 
     private String composeCurrentWeatherUrl(String lat, String lon) {
         String unitName = getUnitNameByPreference();
-        return Constants.OPEN_WEATHER_BASE_URL + Constants.WEATHER_ENDPOINT + "?APPID=" + Constants.OPEN_WEATHER_API_KEY + "&lat=" + lat + "&lon=" + lon + unitName;
+        return Constants.OPEN_WEATHER_BASE_URL + Constants.WEATHER_ENDPOINT + "?APPID=" + getApiKey() + "&lat=" + lat + "&lon=" + lon + unitName;
     }
 
     private String getUnitNameByPreference() {
@@ -85,5 +87,12 @@ public class OpenWeatherService implements WeatherInterface {
 
     public void setCurrentWeather(CurrentWeatherModel currentWeather) {
         this.currentWeather = currentWeather;
+    }
+
+    public String getApiKey()
+    {
+        Qlassified.Service.start(context);
+        Qlassified.Service.setStorageService(new QlassifiedSharedPreferencesService(context, "api_key_storage"));
+        return Qlassified.Service.getString("api_key");
     }
 }

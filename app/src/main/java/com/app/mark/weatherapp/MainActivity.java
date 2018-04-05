@@ -20,6 +20,8 @@ import android.widget.Toast;
 import com.app.mark.weatherapp.interfaces.OnRemoteCallFinishListener;
 import com.app.mark.weatherapp.model.CurrentWeatherModel;
 import com.app.mark.weatherapp.services.OpenWeatherService;
+import com.q42.qlassified.Qlassified;
+import com.q42.qlassified.Storage.QlassifiedSharedPreferencesService;
 import com.squareup.picasso.Picasso;
 
 import java.util.Timer;
@@ -58,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         initUI();
         setPreferences();
+        putSecurityApiKey();
         getStoredGeoLocation();
         refreshGeoCoordinates();
         Timer timer = new Timer();
@@ -174,6 +177,19 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return false;
+    }
+
+    private void putSecurityApiKey()
+    {
+        Boolean isFirstRun = preferences.getBoolean("isFirstRun", true);
+        if(isFirstRun){
+            Qlassified.Service.start(this);
+            Qlassified.Service.setStorageService(new QlassifiedSharedPreferencesService(this, "api_key_storage"));
+            Qlassified.Service.put("api_key", Constants.OPEN_WEATHER_API_KEY);
+            SharedPreferences.Editor prefEditor = preferences.edit();
+            prefEditor.putBoolean("isFirstRun", false);
+            prefEditor.apply();
+        }
     }
 
     @Override
