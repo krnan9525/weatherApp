@@ -20,20 +20,20 @@ public class CurrentWeatherModel implements JSONSerializationInterface {
 
     public CurrentWeatherModel(Boolean isUsingImperialUnit) {
         this.isUsingImperialUnit = isUsingImperialUnit;
+        temperature = new TemperatureModel(isUsingImperialUnit);
+        wind = new WindModel(isUsingImperialUnit);
+        weather = new WeatherModel();
+        sunRise = new SunRiseModel();
     }
 
     @Override
     public void constructClassFromJson(JSONObject jsonObject) {
         try {
             cityName = jsonObject.getString("name");
-            temperature = new TemperatureModel(isUsingImperialUnit);
             temperature.constructClassFromJson(jsonObject.getJSONObject("main"));
             humidity = jsonObject.getJSONObject("main").getInt("humidity");
-            wind = new WindModel(isUsingImperialUnit);
             wind.constructClassFromJson(jsonObject.getJSONObject("wind"));
-            weather = new WeatherModel();
             weather.constructClassFromJson(jsonObject.getJSONArray("weather").getJSONObject(0));
-            sunRise = new SunRiseModel();
             sunRise.constructClassFromJson(jsonObject.getJSONObject("sys"));
         } catch (JSONException e) {
             e.printStackTrace();
