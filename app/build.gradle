@@ -28,7 +28,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
-    compile 'com.loopj.android:android-async-http:1.4.9'
-    compile 'jp.wasabeef:picasso-transformations:2.1.0'
-    compile 'com.q42:qlassified:0.1.1'
+    implementation 'com.loopj.android:android-async-http:1.4.9'
+    implementation 'jp.wasabeef:picasso-transformations:2.1.0'
+    implementation 'com.q42:qlassified:0.1.1'
 }
